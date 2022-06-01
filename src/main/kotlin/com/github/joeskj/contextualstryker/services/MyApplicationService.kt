@@ -1,6 +1,6 @@
-package org.jetbrains.plugins.template.services
+package com.github.joeskj.contextualstryker.services
 
-import org.jetbrains.plugins.template.MyBundle
+import com.github.joeskj.contextualstryker.MyBundle
 
 class MyApplicationService {
 
