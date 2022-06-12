@@ -1,10 +1,11 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.joeskj.contextualstryker</id>
-    <name>contextual-stryker</name>
+    <name>Contextual Stryker</name>
     <vendor>joeskj</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.plugins.terminal</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="com.github.joeskj.contextualstryker.services.MyApplicationService"/>
@@ -15,4 +16,24 @@
         <listener class="com.github.joeskj.contextualstryker.listeners.MyProjectManagerListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </applicationListeners>
+    <actions>
+        <action id="com.github.joeskj.contextualstryker.actions.RunStrykerOnFileActionEPMR"
+                class="com.github.joeskj.contextualstryker.actions.RunStrykerOnFileAction"
+                icon="MyIcons.Action"
+                text="Run Stryker for Selected File(s)" description="Run Stryker mutation tests for the selected file(s)">
+            <add-to-group group-id="EditorPopupMenu.Run" anchor="last"/>
+        </action>
+        <action id="com.github.joeskj.contextualstryker.actions.RunStrykerOnFileActionETPM"
+                class="com.github.joeskj.contextualstryker.actions.RunStrykerOnFileAction"
+                icon="MyIcons.Action"
+                text="Run Stryker for Selected File(s)" description="Run Stryker mutation tests for the selected file(s)">
+            <add-to-group group-id="EditorTabPopupMenu" anchor="last"/>
+        </action>
+        <action id="com.github.joeskj.contextualstryker.actions.RunStrykerOnFileActionPVPMRG"
+                class="com.github.joeskj.contextualstryker.actions.RunStrykerOnFileAction"
+                icon="MyIcons.Action"
+                text="Run Stryker for Selected File(s)" description="Run Stryker mutation tests for the selected file(s)">
+            <add-to-group group-id="ProjectViewPopupMenuRunGroup" anchor="last"/>
+        </action>
+    </actions>
 </idea-plugin>
