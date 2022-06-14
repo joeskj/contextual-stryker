@@ -3,5 +3,16 @@
 # contextual-stryker Changelog
 
 ## [Unreleased]
+- Improve performance of StrykerListener
+
+## v1.0.2
 ### Added
-- Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
+- Support for running Stryker from test files, rather than just production files.
+- More detailed logging to simplify troubleshooting.
+
+## v1.0.1
+### Added
+- Support for IntelliJ 2022.1+.
+
+## v1.0.0
+### Initial release
