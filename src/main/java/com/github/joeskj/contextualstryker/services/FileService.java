@@ -17,9 +17,9 @@ public class FileService {
         VirtualFile[] selectedFilesAndFolders = event.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
 
         if (selectedFilesAndFolders == null || selectedFilesAndFolders.length == 0) {
-            throw new IllegalStateException("Unable to detect selected file(s)");
+            LOG.error("Unable to detect selected file(s)");
+            return new HashSet<>();
         }
-        LOG.debug("Selected files and folders: " + selectedFilesAndFolders.length);
 
         return getFiles(selectedFilesAndFolders);
     }
