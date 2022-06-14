@@ -28,7 +28,7 @@ public class StrykerService {
         String output = CommandLineService.runShellCommand(basePath, "npm ls --depth 0 @stryker-mutator/core");
         LOG.debug("verifyStrykerInstallation output: " + output);
         if (output.contains("(empty)")) {
-            throw new IllegalStateException("Unable to detect Stryker installation");
+            throw new IllegalStateException("Unable to detect Stryker installation at base path: " + basePath);
         }
     }
 
