@@ -53,6 +53,7 @@ public class StrykerService {
         String paths = files.stream()
                 .filter(fileService::isStrykable)
                 .map(VirtualFile::getPath)
+                .map(path -> path.replace(".test.js", ".js"))
                 .collect(Collectors.joining(","));
 
         return "npx stryker run -m " + paths;

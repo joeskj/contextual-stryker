@@ -26,8 +26,7 @@ public class FileService {
 
     public boolean isStrykable(VirtualFile file) {
         return file != null
-                && "js".equalsIgnoreCase(file.getExtension())
-                && !file.getPath().endsWith(".test.js");
+                && "js".equalsIgnoreCase(file.getExtension());
     }
 
     private Collection<VirtualFile> getFiles(VirtualFile[] virtualFiles) {
