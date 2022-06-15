@@ -5,6 +5,10 @@
 ## [Unreleased]
 - Improve performance of StrykerListener
 
+## 1.0.3
+### Fixed
+- Logic for determining the Stryker base path when it differs from the project root
+
 ## 1.0.2
 ### Added
 - Support for running Stryker from test files, rather than just production files.
