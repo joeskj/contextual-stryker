@@ -3,9 +3,9 @@ package com.github.joeskj.contextualstryker.services;
 import com.github.joeskj.contextualstryker.listeners.StrykerListener;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.terminal.ShellTerminalWidget;
 import org.jetbrains.plugins.terminal.TerminalView;
 
@@ -32,10 +32,20 @@ public class StrykerService {
         }
     }
 
-    @Nullable
-    private String getBasePath(@NotNull Project project) {
-        String basePath = project.getBasePath();
+    private @NotNull String getBasePath(@NotNull Project project) {
+        VirtualFile projectDir = ProjectUtil.guessProjectDir(project);
+        if (projectDir == null) {
+            throw new IllegalStateException("Unable to determine project directory");
+        }
+
+        VirtualFile file = projectDir.findChild("stryker.conf.json");
+        if (file == null) {
+            throw new IllegalStateException("Unable to find stryker.conf.json");
+        }
+
+        String basePath = file.getParent().getPath();
         LOG.debug("Base path: " + basePath);
+
         return basePath;
     }
 
