@@ -17,7 +17,7 @@ public class FileService {
         VirtualFile[] selectedFilesAndFolders = event.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
 
         if (selectedFilesAndFolders == null || selectedFilesAndFolders.length == 0) {
-            LOG.error("Unable to detect selected file(s)");
+            LOG.debug("Unable to detect selected file(s)");
             return new HashSet<>();
         }
 
