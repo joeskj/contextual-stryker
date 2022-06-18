@@ -10,7 +10,9 @@ import org.jetbrains.plugins.terminal.ShellTerminalWidget;
 import org.jetbrains.plugins.terminal.TerminalView;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class StrykerService {
@@ -38,7 +40,7 @@ public class StrykerService {
             throw new IllegalStateException("Unable to determine project directory");
         }
 
-        VirtualFile file = projectDir.findChild("stryker.conf.json");
+        VirtualFile file = findChildRecursively(projectDir, "stryker.conf.json");
         if (file == null) {
             throw new IllegalStateException("Unable to find stryker.conf.json");
         }
@@ -47,6 +49,19 @@ public class StrykerService {
         LOG.debug("Base path: " + basePath);
 
         return basePath;
+    }
+
+    private VirtualFile findChildRecursively(VirtualFile projectDir, String filename) {
+        VirtualFile file = projectDir.findChild(filename);
+        if (file == null) {
+            List<VirtualFile> children = Arrays.stream(projectDir.getChildren())
+                    .filter(child -> !child.isRecursiveOrCircularSymlink())
+                    .collect(Collectors.toList());
+            for (VirtualFile child : children) {
+                file = findChildRecursively(child, filename);
+            }
+        }
+        return file;
     }
 
     public void runStryker(Project project, Collection<VirtualFile> files) throws IOException {
