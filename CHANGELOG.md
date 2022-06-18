@@ -3,11 +3,16 @@
 # contextual-stryker Changelog
 
 ## [Unreleased]
-- Improve performance of StrykerListener
+- Improve performance
+
+## 1.0.4
+### Fixed
+- Logic for determining the Stryker base path (hopefully for real this time).
+
 
 ## 1.0.3
 ### Fixed
-- Logic for determining the Stryker base path when it differs from the project root
+- Logic for determining the Stryker base path when it differs from the project root.
 
 ## 1.0.2
 ### Added
