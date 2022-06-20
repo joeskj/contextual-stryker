@@ -4,15 +4,16 @@ import com.github.joeskj.contextualstryker.listeners.StrykerListener;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
+import com.intellij.openapi.roots.ContentIterator;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.terminal.ShellTerminalWidget;
 import org.jetbrains.plugins.terminal.TerminalView;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class StrykerService {
@@ -40,28 +41,19 @@ public class StrykerService {
             throw new IllegalStateException("Unable to determine project directory");
         }
 
-        VirtualFile file = findChildRecursively(projectDir, "stryker.conf.json");
-        if (file == null) {
-            throw new IllegalStateException("Unable to find stryker.conf.json");
-        }
+        AtomicReference<String> basePath = new AtomicReference<>("");
 
-        String basePath = file.getParent().getPath();
+        ContentIterator iterator = file -> {
+            if ("stryker.conf.json".equals(file.getName())) {
+                basePath.set(file.getParent().getPath());
+                return false;
+            }
+            return true;
+        };
+        VfsUtilCore.iterateChildrenRecursively(projectDir, null, iterator);
         LOG.debug("Base path: " + basePath);
 
-        return basePath;
-    }
-
-    private VirtualFile findChildRecursively(VirtualFile projectDir, String filename) {
-        VirtualFile file = projectDir.findChild(filename);
-        if (file == null) {
-            List<VirtualFile> children = Arrays.stream(projectDir.getChildren())
-                    .filter(child -> !child.isRecursiveOrCircularSymlink())
-                    .collect(Collectors.toList());
-            for (VirtualFile child : children) {
-                file = findChildRecursively(child, filename);
-            }
-        }
-        return file;
+        return basePath.get();
     }
 
     public void runStryker(Project project, Collection<VirtualFile> files) throws IOException {
@@ -79,6 +71,7 @@ public class StrykerService {
                 .filter(fileService::isStrykable)
                 .map(VirtualFile::getPath)
                 .map(path -> path.replace(".test.js", ".js"))
+                .distinct()
                 .collect(Collectors.joining(","));
 
         return "npx stryker run -m " + paths;

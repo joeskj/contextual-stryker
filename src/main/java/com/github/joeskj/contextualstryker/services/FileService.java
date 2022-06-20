@@ -3,11 +3,13 @@ package com.github.joeskj.contextualstryker.services;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 public class FileService {
 
@@ -24,24 +26,20 @@ public class FileService {
         return getFiles(selectedFilesAndFolders);
     }
 
-    public boolean isStrykable(VirtualFile file) {
-        return file != null
-                && "js".equalsIgnoreCase(file.getExtension());
-    }
-
-    private Collection<VirtualFile> getFiles(VirtualFile[] virtualFiles) {
+    private Collection<VirtualFile> getFiles(VirtualFile[] filesAndFolders) {
         Collection<VirtualFile> files = new HashSet<>();
 
-        for (VirtualFile virtualFile : virtualFiles) {
-            if (virtualFile.isRecursiveOrCircularSymlink()) {
-                LOG.info("Skipping file " + virtualFile.getPath() + " because it is a circular symlink or recursive");
-            } else if (virtualFile.isDirectory()) {
-                files.addAll(getFiles(virtualFile.getChildren()));
-            } else {
-                files.add(virtualFile);
-            }
+        for (VirtualFile fileOrFolder : filesAndFolders) {
+            List<VirtualFile> children = VfsUtil.collectChildrenRecursively(fileOrFolder);
+            children.removeIf(VirtualFile::isDirectory);
+            files.addAll(children);
         }
 
         return files;
+    }
+
+    public boolean isStrykable(VirtualFile file) {
+        return file != null
+                && "js".equalsIgnoreCase(file.getExtension());
     }
 }
