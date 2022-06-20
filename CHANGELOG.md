@@ -5,10 +5,13 @@
 ## [Unreleased]
 - Improve performance
 
+## 1.0.5
+### Changed
+- File search implementation
+
 ## 1.0.4
 ### Fixed
 - Logic for determining the Stryker base path (hopefully for real this time).
-
 
 ## 1.0.3
 ### Fixed
