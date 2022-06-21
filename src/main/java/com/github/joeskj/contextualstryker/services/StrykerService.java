@@ -13,6 +13,7 @@ import org.jetbrains.plugins.terminal.TerminalView;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -41,10 +42,13 @@ public class StrykerService {
         if (projectDir == null) {
             throw new IllegalStateException("Unable to determine project directory");
         }
+        LOG.debug("Guessed project directory: " + projectDir.getPath());
 
         AtomicReference<String> strykerFolderPath = new AtomicReference<>("");
 
+        AtomicInteger iterationCount = new AtomicInteger();
         ContentIterator iterator = file -> {
+            iterationCount.getAndIncrement();
             if ("stryker.conf.json".equals(file.getName())) {
                 strykerFolderPath.set(file.getParent().getPath());
                 return false;
@@ -52,7 +56,7 @@ public class StrykerService {
             return true;
         };
         VfsUtilCore.iterateChildrenRecursively(projectDir, null, iterator);
-        LOG.debug("Base path: " + strykerFolderPath);
+        LOG.debug("Found base path after " + iterationCount + " iterations: " + strykerFolderPath);
 
         return strykerFolderPath.get();
     }
@@ -65,6 +69,7 @@ public class StrykerService {
         ShellTerminalWidget shellWidget = terminalView.createLocalShellWidget(basePath, "Stryker");
         shellWidget.getTerminalTextBuffer().addModelListener(new StrykerListener(shellWidget));
         shellWidget.executeCommand(command);
+        LOG.debug("Stryker command execution initiated");
     }
 
     private String getStrykerCommand(Collection<VirtualFile> files) {

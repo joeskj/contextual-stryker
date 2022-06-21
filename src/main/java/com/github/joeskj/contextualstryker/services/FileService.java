@@ -29,11 +29,13 @@ public class FileService {
     private Collection<VirtualFile> getFiles(VirtualFile[] filesAndFolders) {
         Collection<VirtualFile> files = new HashSet<>();
 
+        LOG.debug("Iterating over " + filesAndFolders.length + " selected files/folders...");
         for (VirtualFile fileOrFolder : filesAndFolders) {
             List<VirtualFile> children = VfsUtil.collectChildrenRecursively(fileOrFolder);
             children.removeIf(VirtualFile::isDirectory);
             files.addAll(children);
         }
+        LOG.debug("Found " + files.size() + " file(s)");
 
         return files;
     }
