@@ -5,6 +5,12 @@
 ## [Unreleased]
 - Improve performance
 
+## 1.0.6
+### Fixed
+- Discrepancy in base path determination
+### Added
+- Logging to assist with performance analysis
+
 ## 1.0.5
 ### Changed
 - File search implementation
