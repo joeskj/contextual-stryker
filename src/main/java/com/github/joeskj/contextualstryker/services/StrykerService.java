@@ -21,13 +21,14 @@ public class StrykerService {
     private static final Logger LOG = Logger.getInstance(StrykerService.class);
 
     private final FileService fileService;
+    private String basePath;
 
     public StrykerService(FileService fileService) {
         this.fileService = fileService;
     }
 
     public void verifyStrykerInstallation(Project project) {
-        String basePath = getBasePath(project);
+        basePath = getBasePath(project);
         String output = CommandLineService.runShellCommand(basePath, "npm ls --depth 0 @stryker-mutator/core");
         LOG.debug("verifyStrykerInstallation output: " + output);
         if (output.contains("(empty)")) {
@@ -41,19 +42,19 @@ public class StrykerService {
             throw new IllegalStateException("Unable to determine project directory");
         }
 
-        AtomicReference<String> basePath = new AtomicReference<>("");
+        AtomicReference<String> strykerFolderPath = new AtomicReference<>("");
 
         ContentIterator iterator = file -> {
             if ("stryker.conf.json".equals(file.getName())) {
-                basePath.set(file.getParent().getPath());
+                strykerFolderPath.set(file.getParent().getPath());
                 return false;
             }
             return true;
         };
         VfsUtilCore.iterateChildrenRecursively(projectDir, null, iterator);
-        LOG.debug("Base path: " + basePath);
+        LOG.debug("Base path: " + strykerFolderPath);
 
-        return basePath.get();
+        return strykerFolderPath.get();
     }
 
     public void runStryker(Project project, Collection<VirtualFile> files) throws IOException {
@@ -61,7 +62,7 @@ public class StrykerService {
         LOG.debug("Stryker command: " + command);
 
         TerminalView terminalView = TerminalView.getInstance(project);
-        ShellTerminalWidget shellWidget = terminalView.createLocalShellWidget(project.getBasePath(), "Stryker");
+        ShellTerminalWidget shellWidget = terminalView.createLocalShellWidget(basePath, "Stryker");
         shellWidget.getTerminalTextBuffer().addModelListener(new StrykerListener(shellWidget));
         shellWidget.executeCommand(command);
     }
