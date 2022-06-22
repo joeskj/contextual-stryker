@@ -2,8 +2,9 @@
 
 # contextual-stryker Changelog
 
-## [Unreleased]
-- Improve performance
+## 1.0.7
+### Removed
+- Stryker install verification (to improve performance)
 
 ## 1.0.6
 ### Fixed
