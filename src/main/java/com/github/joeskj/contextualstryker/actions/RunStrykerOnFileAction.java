@@ -38,7 +38,6 @@ public class RunStrykerOnFileAction extends AnAction {
             LOG.debug("Beginning RunStrykerOnFileAction.actionPerformed...");
             Project project = projectService.getProject(event);
             Collection<VirtualFile> files = fileService.getFiles(event);
-            strykerService.verifyStrykerInstallation(project);
             strykerService.runStryker(project, files);
         } catch (Exception e) {
             notifyError(e);

@@ -22,19 +22,20 @@ public class StrykerService {
     private static final Logger LOG = Logger.getInstance(StrykerService.class);
 
     private final FileService fileService;
-    private String basePath;
 
     public StrykerService(FileService fileService) {
         this.fileService = fileService;
     }
 
-    public void verifyStrykerInstallation(Project project) {
-        basePath = getBasePath(project);
-        String output = CommandLineService.runShellCommand(basePath, "npm ls --depth 0 @stryker-mutator/core");
-        LOG.debug("verifyStrykerInstallation output: " + output);
-        if (output.contains("(empty)")) {
-            throw new IllegalStateException("Unable to detect Stryker installation at base path: " + basePath);
-        }
+    public void runStryker(Project project, Collection<VirtualFile> files) throws IOException {
+        String command = getStrykerCommand(files);
+        LOG.debug("Stryker command: " + command);
+
+        TerminalView terminalView = TerminalView.getInstance(project);
+        ShellTerminalWidget shellWidget = terminalView.createLocalShellWidget(getBasePath(project), "Stryker");
+        shellWidget.getTerminalTextBuffer().addModelListener(new StrykerListener(shellWidget));
+        shellWidget.executeCommand(command);
+        LOG.debug("Stryker command execution initiated");
     }
 
     private @NotNull String getBasePath(@NotNull Project project) {
@@ -59,17 +60,6 @@ public class StrykerService {
         LOG.debug("Found base path after " + iterationCount + " iterations: " + strykerFolderPath);
 
         return strykerFolderPath.get();
-    }
-
-    public void runStryker(Project project, Collection<VirtualFile> files) throws IOException {
-        String command = getStrykerCommand(files);
-        LOG.debug("Stryker command: " + command);
-
-        TerminalView terminalView = TerminalView.getInstance(project);
-        ShellTerminalWidget shellWidget = terminalView.createLocalShellWidget(basePath, "Stryker");
-        shellWidget.getTerminalTextBuffer().addModelListener(new StrykerListener(shellWidget));
-        shellWidget.executeCommand(command);
-        LOG.debug("Stryker command execution initiated");
     }
 
     private String getStrykerCommand(Collection<VirtualFile> files) {
