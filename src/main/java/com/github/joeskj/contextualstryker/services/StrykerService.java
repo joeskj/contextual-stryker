@@ -66,7 +66,7 @@ public class StrykerService {
         String paths = files.stream()
                 .filter(fileService::isStrykable)
                 .map(VirtualFile::getPath)
-                .map(path -> path.replace(".test.js", ".js"))
+                .map(path -> "\"" + path.replace(".test.js", ".js") + "\"")
                 .distinct()
                 .collect(Collectors.joining(","));
 
