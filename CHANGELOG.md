@@ -3,8 +3,12 @@
 # contextual-stryker Changelog
 
 ## [Unreleased]
+### Fixed
+- Issue with space in file paths.
+
+## 1.0.7
 ### Removed
-- Stryker install verification (to improve performance)
+- Stryker install verification (to improve performance).
 
 ## 1.0.6
 ### Fixed
